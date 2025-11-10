@@ -3,6 +3,7 @@ import threading
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import geminiagent
+import database
 
 USER_COLOR = ("#3a7ebf", "#1f538d")
 AGENT_COLOR = ("#5c5c5c", "#333333")
@@ -162,6 +163,8 @@ class OtomotivAgentApp(ctk.CTk):
 
         # Ekrana mesajı eklerken yedeği kullanıyoruz
         self.append_message("Sen", user_message, current_image_path)
+
+        database.save_message(sender="Sen", text_content=user_message, image_path=current_image_path)
         
         self.user_input_textbox.delete("0.0", "end")
         self.clear_selected_image() # Şimdi temizleyebiliriz, çünkü yedeğimiz var.
@@ -186,6 +189,9 @@ class OtomotivAgentApp(ctk.CTk):
             self.thinking_bubble.destroy()
             self.thinking_bubble = None
         self.append_message("Agent", response)
+
+        database.save_message(sender="Agent", text_content=response, image_path=None)
+
         self.scroll_to_bottom()
 
     def scroll_to_bottom(self):
@@ -194,5 +200,6 @@ class OtomotivAgentApp(ctk.CTk):
 if __name__ == "__main__":
     ctk.set_appearance_mode("System")
     ctk.set_default_color_theme("blue")
+    database.init_db()
     app = OtomotivAgentApp()
     app.mainloop()
